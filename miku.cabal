@@ -1,5 +1,5 @@
 Name:                 miku
-Version:              2012.1.19
+Version:              2012.10.27
 Build-type:           Simple
 Synopsis:             A minimum web dev DSL in Haskell
 Description:

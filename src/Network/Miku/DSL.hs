@@ -1,3 +1,5 @@
+{-# LANGUAGE OverloadedStrings #-}
+
 module Network.Miku.DSL where
 
 import Control.Monad.Reader
@@ -59,6 +61,11 @@ html x = do
   update - set_content_type _TextHtml
   update - set_body_bytestring - x
 
+
+json :: ByteString -> AppMonad
+json x = do
+  update - set_content_type "text/json"
+  update - set_body_bytestring - x
 
 captures :: AppMonadT [(ByteString, ByteString)]
 captures = ask ^ namespace miku_captures
