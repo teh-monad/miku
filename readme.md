@@ -98,14 +98,6 @@ check: <http://localhost:3000>
     -- in Network.Miku.Engine
     
     miku :: MikuMonad -> Application
-
-
-## Miku application template
-
-This template project shows how to incorporate sandboxing, auto-reloading and other cool stuff.
-
-<https://github.com/nfjinjing/miku-template>
-
   
 
 ## Hints
