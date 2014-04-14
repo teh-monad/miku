@@ -6,7 +6,6 @@ import Control.Monad.State
 import Hack2
 import Air.Env
 import Prelude ()
-import Data.ByteString.UTF8 (fromString, toString)
 
 import qualified Data.ByteString.Char8 as B
 import Data.ByteString.Char8 (ByteString)
@@ -19,10 +18,10 @@ namespace x env =
     .map_fst (B.drop (x.B.length))
 
 put_namespace :: ByteString -> [(ByteString, ByteString)] -> Env -> Env
-put_namespace x xs env = 
+put_namespace x xs env =
   let adds             = xs.map_fst (x +)
       new_headers      = adds.map fst
-      new_hack_headers = 
+      new_hack_headers =
         env.hackHeaders.reject (fst > belongs_to new_headers) ++ adds
   in
   env {hackHeaders = new_hack_headers}

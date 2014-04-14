@@ -1,9 +1,9 @@
 Name:                 miku
-Version:              2012.10.27
+Version:              2014.4.14
 Build-type:           Simple
 Synopsis:             A minimum web dev DSL in Haskell
 Description:
-    
+
     A simple library for fast web prototyping in Haskell.
 
 License:              BSD3
@@ -21,14 +21,13 @@ library
                     , data-default
                     , hack2 >= 2012.1.19
                     , hack2-contrib >= 2012.1.19
-                    , utf8-string
                     , air >= 2011.6.19
                     , mtl
                     , containers
                     , bytestring
-                    
+
   hs-source-dirs: src/
-  exposed-modules:  
+  exposed-modules:
                       Network.Miku
                       Network.Miku.Config
                       Network.Miku.DSL
