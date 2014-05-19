@@ -10,6 +10,7 @@ import Hack2.Contrib.Utils
 import Data.ByteString.Char8 (ByteString)
 
 import Air.TH
+import Air.Data.Record.SimpleLabel
 
 type AppReader    = Env
 type AppState     = Response
