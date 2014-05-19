@@ -1,5 +1,5 @@
 Name:                 miku
-Version:              2014.4.14
+Version:              2014.5.19
 Build-type:           Simple
 Synopsis:             A minimum web dev DSL in Haskell
 Description:
@@ -21,7 +21,8 @@ library
                     , data-default
                     , hack2 >= 2012.1.19
                     , hack2-contrib >= 2012.1.19
-                    , air >= 2011.6.19
+                    , air >= 2014.5.19
+                    , air-th
                     , mtl
                     , containers
                     , bytestring
