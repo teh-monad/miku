@@ -2,31 +2,29 @@
 
 module Network.Miku.DSL where
 
-import Control.Monad.Reader
-import Control.Monad.State
-import Hack2
-import Hack2.Contrib.Middleware.Censor
-import Hack2.Contrib.Middleware.Config
-import Hack2.Contrib.Middleware.IOConfig
-import Hack2.Contrib.Middleware.Static
-import Hack2.Contrib.Response
-import Hack2.Contrib.Constants
-import Air
-import Network.Miku.Config
-import Network.Miku.Engine
-import Network.Miku.Type
-import Network.Miku.Utils
-import Prelude hiding ((.), (>), (^), (-))
-import qualified Control.Monad.State as State
-import Data.ByteString.Char8 (ByteString)
-
-import Air.Data.Record.SimpleLabel hiding (get)
+import           Control.Lens
+import           Control.Monad.Reader
+import           Control.Monad.State
+import qualified Control.Monad.State               as State
+import           Data.ByteString.Char8             (ByteString)
+import           Hack2
+import           Hack2.Contrib.Constants
+import           Hack2.Contrib.Middleware.Censor
+import           Hack2.Contrib.Middleware.Config
+import           Hack2.Contrib.Middleware.IOConfig
+import           Hack2.Contrib.Middleware.Static
+import           Hack2.Contrib.Response
+import           Network.Miku.Config
+import           Network.Miku.Engine
+import           Network.Miku.Type
+import           Network.Miku.Utils
+import           Prelude                           hiding ((-))
 
 app :: Application -> AppMonad
-app f = ask >>= (f > io) >>= State.put
+app f = ask >>= (liftIO . f) >>= State.put
 
 middleware :: Middleware -> MikuMonad
-middleware x = modM __middlewares - insert_last x
+middleware x = middlewares %= insert_last x
 
 get, put, post, delete :: ByteString -> AppMonad -> MikuMonad
 get    = add_route GET
@@ -37,16 +35,16 @@ delete = add_route DELETE
 
 add_route :: RequestMethod -> ByteString -> AppMonad -> MikuMonad
 add_route route_method route_string app_monad = do
-  modM __router - insert_last - miku_router route_method route_string app_monad
-      
+  modifying router - insert_last - miku_router route_method route_string app_monad
+
 before :: (Env -> IO Env) -> MikuMonad
-before = ioconfig > middleware
+before = middleware . ioconfig
 
 after :: (Response -> IO Response) -> MikuMonad
-after = censor > middleware
+after = middleware . censor
 
 mime :: ByteString -> ByteString -> MikuMonad
-mime k v = modM __mimes - insert_last (k,v)
+mime k v = mimes %= insert_last (k,v)
 
 public :: Maybe ByteString -> [ByteString] -> MikuMonad
 public r xs = middleware - static r xs
@@ -68,4 +66,4 @@ json x = do
   update - set_body_bytestring - x
 
 captures :: AppMonadT [(ByteString, ByteString)]
-captures = ask ^ namespace miku_captures
+captures = ask <&> namespace miku_captures

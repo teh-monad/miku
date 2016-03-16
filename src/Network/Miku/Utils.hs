@@ -4,25 +4,32 @@ module Network.Miku.Utils where
 
 import Control.Monad.State
 import Hack2
-import Air.Env
-import Prelude ()
-
+import Prelude hiding ((-))
 import qualified Data.ByteString.Char8 as B
 import Data.ByteString.Char8 (ByteString)
+import Control.Lens ((#), (&))
+import Data.Bifunctor (first)
+import Data.Monoid ((<>))
+
+infixr 0 -
+{-# INLINE (-) #-}
+(-) :: (a -> b) -> a -> b
+f - x = f x
 
 namespace :: ByteString -> Env -> [(ByteString, ByteString)]
-namespace x env =
-  env
-    .hackHeaders
-    .select (fst > (x `B.isPrefixOf`))
-    .map_fst (B.drop (x.B.length))
+namespace x =
+      map (first (B.drop (B.length x)))
+    . filter ((x `B.isPrefixOf`) . fst)
+    . hackHeaders
 
 put_namespace :: ByteString -> [(ByteString, ByteString)] -> Env -> Env
 put_namespace x xs env =
-  let adds             = xs.map_fst (x +)
-      new_headers      = adds.map fst
+  let adds             = map (first (x <>)) xs
+      new_headers      = map fst adds
       new_hack_headers =
-        env.hackHeaders.reject (fst > belongs_to new_headers) ++ adds
+        (hackHeaders env & filter (flip notElem new_headers . fst))
+        <> adds
+
   in
   env {hackHeaders = new_hack_headers}
 
