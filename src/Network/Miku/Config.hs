@@ -3,7 +3,7 @@
 
 module Network.Miku.Config where
 
-import           Data.ByteString.Char8                  (ByteString)
+import           Data.ByteString.Char8 (ByteString)
 import           Network.Miku.Utils
 import           Network.Wai
 
