@@ -7,37 +7,39 @@ import Control.Monad.State
 import Data.Bifunctor (first)
 import Data.ByteString.Char8 (ByteString)
 import Data.Monoid ((<>))
-import Hack2
 import Prelude hiding ((-))
 import qualified Data.ByteString.Char8 as B
+import           Network.Wai
+import qualified Network.HTTP.Types           as H
+import Data.String
+import           Data.CaseInsensitive  ( CI )
+import qualified Data.CaseInsensitive as CI
 
 infixr 0 -
 {-# INLINE (-) #-}
 (-) :: (a -> b) -> a -> b
 f - x = f x
 
-namespace :: ByteString -> Env -> [(ByteString, ByteString)]
+namespace :: ByteString -> Request -> [H.Header]
 namespace x =
-      map (first (B.drop (B.length x)))
-    . filter ((x `B.isPrefixOf`) . fst)
-    . hackHeaders
+      map (first . CI.map . B.drop - B.length x)
+    . filter ((x `B.isPrefixOf`) . CI.original. fst)
+    . requestHeaders
 
-put_namespace :: ByteString -> [(ByteString, ByteString)] -> Env -> Env
-put_namespace x xs env =
-  let adds             = map (first (x <>)) xs
-      new_headers      = map fst adds
-      new_hack_headers =
-        (hackHeaders env & filter (flip notElem new_headers . fst))
+putNamespace :: ByteString -> [H.Header] -> Request -> Request
+putNamespace x xs env =
+  let adds             = map (first (CI.map (x <>))) xs
+      newHeaders      = map fst adds
+      newRequestHeaders =
+        (requestHeaders env & filter (flip notElem newHeaders . fst))
         <> adds
 
   in
-  env {hackHeaders = new_hack_headers}
+  env {requestHeaders = newRequestHeaders}
 
 
 
-insert_last :: a -> [a] -> [a]
-insert_last x xs = xs ++ [x]
+insertLast :: a -> [a] -> [a]
+insertLast x xs = xs <> [x]
 
-update :: (MonadState a m, Functor m) => (a -> a) -> m ()
-update = modify
 

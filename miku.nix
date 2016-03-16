@@ -1,5 +1,5 @@
-{ mkDerivation, air, air-th, base, bytestring, containers
-, data-default, hack2, hack2-contrib, mtl, stdenv
+{ mkDerivation, base, bytestring, containers
+, mtl, stdenv
 
 , nemesis
 , pretty-show
@@ -9,20 +9,22 @@
 , foreign-store
 , lens
 
-, hack2-handler-snap-server
-, snap-server
 , moe
+, wai
+, wai-extra
+, warp
+, http-types
 
 , pkgs
 
 }:
 mkDerivation {
   pname = "miku";
-  version = "2014.11.17";
+  version = "2016.3.16";
   src = ./.;
   libraryHaskellDepends = [
-    air air-th base bytestring containers data-default hack2
-    hack2-contrib mtl
+    base bytestring containers
+    mtl
 
     happy
     stylish-haskell
@@ -33,9 +35,11 @@ mkDerivation {
     foreign-store
     lens
 
-    hack2-handler-snap-server
-    snap-server
     moe
+    wai
+    wai-extra
+    warp
+    http-types
   ] ++
   (with pkgs;
     [

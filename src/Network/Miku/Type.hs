@@ -9,10 +9,10 @@ import           Control.Monad.Reader
 import           Control.Monad.State
 import           Data.ByteString.Char8       (ByteString)
 import           Data.Monoid
-import           Hack2
-import           Hack2.Contrib.Utils
+import           Network.Wai
+import qualified Network.HTTP.Types           as H
 
-type AppReader    = Env
+type AppReader    = Request
 type AppState     = Response
 type AppMonadT    = ReaderT AppReader (StateT AppState IO)
 type AppMonad     = AppMonadT ()
@@ -22,7 +22,7 @@ data MikuState = MikuState
   {
     _middlewares :: [Middleware]
   , _router      :: [Middleware]
-  , _mimes       :: [(ByteString, ByteString)]
+  , _mimes       :: [H.Header]
   }
 
 instance Monoid MikuState where

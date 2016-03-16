@@ -4,33 +4,44 @@
 
 module Network.Miku.Engine where
 
-import           Control.Lens                      hiding (use)
-import           Control.Monad.Reader              hiding (join)
-import           Control.Monad.State               hiding (join)
-import           Data.ByteString.Char8             (ByteString)
-import qualified Data.ByteString.Char8             as B
-import qualified Data.Default                      as Default
+import           Control.Lens          hiding (use)
+import           Control.Monad.Reader  hiding (join)
+import           Control.Monad.State   hiding (join)
+import           Data.ByteString.Char8 (ByteString)
+import qualified Data.ByteString.Char8 as B
+import qualified Data.Default          as Default
 import           Data.List
 import           Data.Maybe
-import           Hack2
-import           Hack2.Contrib.Middleware.NotFound
-import           Hack2.Contrib.Middleware.UserMime
-import           Hack2.Contrib.Utils               hiding (get, put)
+import qualified Network.HTTP.Types    as H
 import           Network.Miku.Config
 import           Network.Miku.Type
 import           Network.Miku.Utils
-import           Prelude                           hiding ((-))
-import           System.FilePath                   ((</>))
+import           Network.Wai
+import           Prelude               hiding ((-))
+import           System.FilePath       ((</>))
+import           Data.Bifunctor        (first)
+import           Data.CaseInsensitive  (CI)
+import qualified Data.CaseInsensitive  as CI
 
+notFoundResponse :: Response
+notFoundResponse = responseLBS H.status404
+                   [("Content-Type", "text/plain")]
+                   "404 - Not Found"
+
+notFound :: Application
+notFound env respond = respond - notFoundResponse
 
 miku :: MikuMonad -> Application
-miku miku_monad = miku_middleware miku_monad (not_found dummy_app)
+miku = flip miku_middleware notFound
+
+use :: [Middleware] -> Middleware
+use = foldl (.) id
 
 miku_middleware :: MikuMonad -> Middleware
 miku_middleware miku_monad =
 
   let miku_state                      = execState miku_monad mempty
-      mime_filter                     = user_mime - miku_state ^. mimes
+      mime_filter                     = id -- user_mime - miku_state ^. mimes
       miku_middleware_stack           = use - miku_state ^. middlewares
       miku_router_middleware          = use - miku_state ^. router
       pre_installed_middleware_stack  = use - pre_installed_middlewares
@@ -39,14 +50,15 @@ miku_middleware miku_monad =
   use [pre_installed_middleware_stack, mime_filter, miku_middleware_stack, miku_router_middleware]
 
 
-miku_router :: RequestMethod -> ByteString -> AppMonad -> Middleware
+miku_router :: H.Method -> ByteString -> AppMonad -> Middleware
 miku_router route_method route_string app_monad app = \env ->
-  if request_method env == route_method
+  if requestMethod env == route_method
     then
-      case env & path_info & parse_params route_string of
+      case env & rawPathInfo & parse_params route_string of
         Nothing -> app env
         Just (_, params) ->
-          let miku_app = run_app_monad - local (put_namespace miku_captures params) app_monad
+          let mikuHeaders = params & map (first CI.mk)
+              miku_app = run_app_monad - local (putNamespace miku_captures mikuHeaders) app_monad
           in
           miku_app env
 
@@ -56,8 +68,11 @@ miku_router route_method route_string app_monad app = \env ->
 
   where
 
+
     run_app_monad :: AppMonad -> Application
-    run_app_monad app_monad = \env -> runReaderT app_monad env & flip execStateT Default.def
+    run_app_monad app_monad env respond = do
+      r <- runReaderT app_monad env & flip execStateT notFoundResponse
+      respond r
 
 
 parse_params :: ByteString -> ByteString -> Maybe (ByteString, [(ByteString, ByteString)])

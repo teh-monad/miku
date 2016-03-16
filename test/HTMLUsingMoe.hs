@@ -2,17 +2,16 @@
 
 module HTMLUsingMoe where
 
-import qualified Network.Miku as Miku
-import Network.Miku (get, miku)
-import Network.Miku.Utils ((-))
-import Hack2.Handler.SnapServer
-import Text.HTML.Moe2
+import           Network.Miku               (get, miku)
+import qualified Network.Miku               as Miku
+import           Network.Miku.Utils         ((-))
+import           Text.HTML.Moe2
 
-import Prelude hiding ((-), head, div, (/))
+import           Control.Lens
 import qualified Data.ByteString.Lazy.Char8 as LB
-import Control.Lens
-import Data.ByteString.Lens
-
+import           Data.ByteString.Lens
+import           Prelude                    hiding (div, head, (-), (/))
+import           Network.Wai.Handler.Warp   (run)
 
 hello_page :: LB.ByteString
 hello_page = render_bytestring -
@@ -29,6 +28,6 @@ main :: IO ()
 main = do
   putStrLn - "server started..."
 
-  run - miku - do
+  run 3000 - miku - do
     get "/" - do
       Miku.html - view packedChars - review packedChars hello_page

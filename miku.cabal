@@ -17,18 +17,22 @@ extra-doc-files:      readme.md, changelog.md, known-issues.md
 
 library
   build-depends:      
-                      base > 4 && <= 6
-                    , bytestring
-                    , containers
-                    , filepath >= 1.4.0.0
-                    , hack2 >= 2012.1.19
-                    , hack2-contrib >= 2012.1.19
-                    , mtl
-                    , lens
+                        base > 4 && <= 6
+                      , blaze-builder >= 0.4.0.1
+                      , bytestring
+                      , case-insensitive >= 1.2.0.5
+                      , containers
+                      , data-default >= 0.5.3
+                      , filepath >= 1.4.0.0
+                      , http-types >= 0.9
+                      , lens
+                      , mtl
+                      , wai
+                      , wai-extra
                     -- for testing
-                    -- , hack2-handler-snap-server
-                    -- , foreign-store
-                    -- , moe
+                    , foreign-store
+                    , moe
+                    , warp
 
 
   hs-source-dirs: src/

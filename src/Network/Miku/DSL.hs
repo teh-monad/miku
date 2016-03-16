@@ -2,68 +2,77 @@
 
 module Network.Miku.DSL where
 
+import           Blaze.ByteString.Builder            (fromByteString)
 import           Control.Lens
 import           Control.Monad.Reader
 import           Control.Monad.State
-import qualified Control.Monad.State               as State
-import           Data.ByteString.Char8             (ByteString)
-import           Hack2
-import           Hack2.Contrib.Constants
-import           Hack2.Contrib.Middleware.Censor
-import           Hack2.Contrib.Middleware.Config
-import           Hack2.Contrib.Middleware.IOConfig
-import           Hack2.Contrib.Middleware.Static
-import           Hack2.Contrib.Response
+import qualified Control.Monad.State                 as State
+import           Data.ByteString.Char8               (ByteString)
+import           Data.CaseInsensitive                (CI)
+import qualified Data.CaseInsensitive                as CI
+import qualified Network.HTTP.Types                  as H
 import           Network.Miku.Config
 import           Network.Miku.Engine
 import           Network.Miku.Type
 import           Network.Miku.Utils
-import           Prelude                           hiding ((-))
+import           Network.Wai
+import           Network.Wai.Middleware.StripHeaders
+import           Prelude                             hiding ((-))
 
-app :: Application -> AppMonad
-app f = ask >>= (liftIO . f) >>= State.put
+
+-- app :: Application -> AppMonad
+-- app f = ask >>= (liftIO . f) >>= State.put
 
 middleware :: Middleware -> MikuMonad
-middleware x = middlewares %= insert_last x
+middleware x = middlewares %= insertLast x
 
 get, put, post, delete :: ByteString -> AppMonad -> MikuMonad
-get    = add_route GET
-put    = add_route PUT
-post   = add_route POST
-delete = add_route DELETE
+get    = add_route H.methodGet
+put    = add_route H.methodPut
+post   = add_route H.methodPost
+delete = add_route H.methodDelete
 
 
-add_route :: RequestMethod -> ByteString -> AppMonad -> MikuMonad
+add_route :: H.Method -> ByteString -> AppMonad -> MikuMonad
 add_route route_method route_string app_monad = do
-  modifying router - insert_last - miku_router route_method route_string app_monad
+  modifying router - insertLast - miku_router route_method route_string app_monad
 
-before :: (Env -> IO Env) -> MikuMonad
-before = middleware . ioconfig
+-- before :: (Env -> IO Env) -> MikuMonad
+-- before = middleware . ioconfig
 
-after :: (Response -> IO Response) -> MikuMonad
-after = middleware . censor
+-- after :: (Response -> IO Response) -> MikuMonad
+-- after = middleware . censor
 
 mime :: ByteString -> ByteString -> MikuMonad
-mime k v = mimes %= insert_last (k,v)
+mime k v = mimes %= insertLast (CI.mk k,v)
 
-public :: Maybe ByteString -> [ByteString] -> MikuMonad
-public r xs = middleware - static r xs
+-- public :: Maybe ByteString -> [ByteString] -> MikuMonad
+-- public r xs = middleware - static r xs
+
+_ContentType :: ByteString
+_ContentType = "Content-Type"
+
+setContentType :: ByteString -> Response -> Response
+setContentType x = mapResponseHeaders ((CI.mk _ContentType, x):) . stripHeader _ContentType
+
+setBody :: ByteString -> Response -> Response
+setBody x r = responseBuilder (responseStatus r) (responseHeaders r) - fromByteString x
 
 text :: ByteString -> AppMonad
 text x = do
-  update - set_content_type _TextPlain
-  update - set_body_bytestring - x
+  modify - setContentType "text/plain; charset=UTF-8"
+  modify - setBody - x
 
 html :: ByteString -> AppMonad
 html x = do
-  update - set_content_type _TextHtml
-  update - set_body_bytestring - x
+  modify - setContentType "text/html; charset=UTF-8"
+  modify - setBody - x
 
 
 json :: ByteString -> AppMonad
 json x = do
-  update - set_content_type "text/json"
-  update - set_body_bytestring - x
+  modify - setContentType "text/json"
+  modify - setBody - x
 
-captures :: AppMonadT [(ByteString, ByteString)]
+captures :: AppMonadT [H.Header]
 captures = ask <&> namespace miku_captures

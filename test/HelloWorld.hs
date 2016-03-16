@@ -2,7 +2,8 @@
 
 module HelloWorld where
 
-import           Hack2.Handler.SnapServer
 import           Network.Miku
+import           Network.Wai.Handler.Warp (run)
 
-main = run . miku $ get "/" (text "miku power")
+main :: IO ()
+main = run 3000 . miku $ get "/" (text "miku power")

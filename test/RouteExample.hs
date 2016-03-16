@@ -2,21 +2,18 @@
 
 module RouteExample where
 
-import           Control.Concurrent                          (forkIO)
+import           Control.Concurrent                   (forkIO)
 import           Control.Lens
 import           Control.Monad.Reader
-import qualified Data.ByteString.Char8                       as B
-import qualified Data.ByteString.Lazy.Char8                  as Lazy
+import qualified Data.ByteString.Char8                as B
+import qualified Data.ByteString.Lazy.Char8           as Lazy
 import           Data.Maybe
 import           Data.Monoid
-import           Hack2.Contrib.Middleware.SimpleAccessLogger
-import           Hack2.Contrib.Request
-import           Hack2.Contrib.Response
-import           Hack2.Contrib.Utils                         (show_bytestring)
-import           Hack2.Handler.SnapServer
 import           Network.Miku
-import           Network.Miku.Utils                          ((-))
-import           Prelude                                     hiding ((-))
+import           Network.Miku.Utils                   ((-))
+import           Network.Wai.Handler.Warp             (run)
+import           Network.Wai.Middleware.RequestLogger
+import           Prelude                              hiding ((-))
 
 appMain :: IO ()
 appMain = do
@@ -24,28 +21,28 @@ appMain = do
 
   putStrLn "server started on port 3000..."
 
-  run . miku - do
+  run 3000 . miku - do
 
-    before return
-    after return
+    -- before return
+    -- after return
 
-    middleware - simple_access_logger Nothing
+    middleware logStdout
 
-    get "/bench" - do
-      name <- ask <&> params <&> lookup "name" <&> fromMaybe "nobody"
-      html ("<h1>" <> name <> "</h1>")
+    -- get "/bench" - do
+    --   name <- ask <&> params <&> lookup "name" <&> fromMaybe "nobody"
+    --   html ("<h1>" <> name <> "</h1>")
 
     -- simple
     get "/hello"    (text "hello world")
 
-    get "/debug"    (text . show_bytestring =<< ask)
+    get "/debug"    (text . B.pack . show =<< ask)
 
     -- io
     get "/cabal"    - text =<< io (B.readFile "miku.cabal")
 
     -- route captures
     get "/say/:user/:message" - do
-      text . show_bytestring =<< captures
+      text . B.pack . show =<< captures
 
     -- html output
     get "/html"     (html "<html><body><p>miku power!</p></body></html>")
@@ -62,7 +59,7 @@ appMain = do
       text "match everything"
 
     -- public serve, only allows /src
-    public (Just ".") ["/src"]
+    -- public (Just ".") ["/src"]
 
     -- treat .hs extension as text/plain
     mime "hs" "text/plain"

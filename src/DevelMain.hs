@@ -4,7 +4,6 @@ module DevelMain where
 
 import           Control.Concurrent       (forkIO)
 import           Foreign.Store
-import           Hack2.Handler.SnapServer
 import qualified HelloWorld               as HelloWorld
 import qualified HTMLUsingMoe             as HTMLUsingMoe
 import           Network.Miku.Utils
@@ -13,9 +12,9 @@ import qualified RouteExample             as RouteExample
 
 main :: IO ()
 main = do
-  -- forkIO RouteExample.main
+  forkIO RouteExample.main
   -- forkIO HelloWorld.main
-  forkIO HTMLUsingMoe.main
+  -- forkIO HTMLUsingMoe.main
   _ <- newStore ()
   return ()
 
