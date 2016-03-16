@@ -29,33 +29,33 @@ emptyApp :: Application
 emptyApp _ respond = respond - emptyResponse
 
 miku :: MikuMonad -> Application
-miku = flip miku_middleware emptyApp
+miku = flip mikuMiddleware emptyApp
 
 use :: [Middleware] -> Middleware
 use = foldl (.) id
 
-miku_middleware :: MikuMonad -> Middleware
-miku_middleware miku_monad =
+mikuMiddleware :: MikuMonad -> Middleware
+mikuMiddleware mikuMonad =
 
-  let miku_state                      = execState miku_monad mempty
-      miku_middleware_stack           = use - middlewares miku_state
-      miku_router_middleware          = use - router miku_state
+  let mikuState                      = execState mikuMonad mempty
+      mikuMiddlewareStack           = use - middlewares mikuState
+      mikuRouterMiddleware          = use - router mikuState
   in
 
-  use [miku_middleware_stack, miku_router_middleware]
+  use [mikuMiddlewareStack, mikuRouterMiddleware]
 
 
 mikuRouter :: H.Method -> ByteString -> AppMonad -> Middleware
-mikuRouter route_method route_string app_monad app = \env ->
-  if requestMethod env == route_method
+mikuRouter routeMethod routeString appMonad app = \env ->
+  if requestMethod env == routeMethod
     then
-      case env & rawPathInfo & parse_params route_string of
+      case env & rawPathInfo & parseParams routeString of
         Nothing -> app env
         Just (_, params) ->
           let mikuHeaders = params & map (first CI.mk)
-              miku_app = _run_app_monad - local (putNamespace miku_captures mikuHeaders) app_monad
+              mikuApp = _runAppMonad - local (putNamespace mikuCaptures mikuHeaders) appMonad
           in
-          miku_app env
+          mikuApp env
 
     else
       app env
@@ -64,37 +64,37 @@ mikuRouter route_method route_string app_monad app = \env ->
   where
 
 
-    _run_app_monad :: AppMonad -> Application
-    _run_app_monad _app_monad _env _respond = do
-      r <- runReaderT _app_monad _env & flip execStateT emptyResponse
+    _runAppMonad :: AppMonad -> Application
+    _runAppMonad _appMonad _env _respond = do
+      r <- runReaderT _appMonad _env & flip execStateT emptyResponse
       _respond r
 
 
-parse_params :: ByteString -> ByteString -> Maybe (ByteString, [(ByteString, ByteString)])
-parse_params "*" x = Just (x, [])
-parse_params "" ""  = Just ("", [])
-parse_params "" _   = Nothing
-parse_params "/" "" = Nothing
-parse_params "/" "/"  = Just ("/", [])
+parseParams :: ByteString -> ByteString -> Maybe (ByteString, [(ByteString, ByteString)])
+parseParams "*" x = Just (x, [])
+parseParams "" ""  = Just ("", [])
+parseParams "" _   = Nothing
+parseParams "/" "" = Nothing
+parseParams "/" "/"  = Just ("/", [])
 
-parse_params t s =
+parseParams t s =
 
-  let template_tokens = B.split '/' t
-      url_tokens      = B.split '/' s
+  let templateTokens = B.split '/' t
+      urlTokens      = B.split '/' s
 
-      _template_last_token_matches_everything         = (template_tokens & length) > 0 && (["*"] `isSuffixOf` template_tokens)
-      _template_tokens_length_equals_url_token_length = (template_tokens & length) == (url_tokens & length)
+      _templateLastTokenMatchesEverything         = (templateTokens & length) > 0 && (["*"] `isSuffixOf` templateTokens)
+      _templateTokensLengthEqualsUrlTokenLength = (templateTokens & length) == (urlTokens & length)
   in
 
-  if not - _template_last_token_matches_everything || _template_tokens_length_equals_url_token_length
+  if not - _templateLastTokenMatchesEverything || _templateTokensLengthEqualsUrlTokenLength
     then Nothing
     else
-      let rs = zipWith capture template_tokens url_tokens
+      let rs = zipWith capture templateTokens urlTokens
       in
       if all isJust rs
         then
-          let token_length = length template_tokens
-              location     = B.pack - "/" </> (B.unpack - B.intercalate "/" - take token_length url_tokens)
+          let tokenLength = length templateTokens
+              location     = B.pack - "/" </> (B.unpack - B.intercalate "/" - take tokenLength urlTokens)
           in
           Just - (location, rs & catMaybes & catMaybes)
         else Nothing

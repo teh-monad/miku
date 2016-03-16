@@ -60,4 +60,4 @@ json x = do
   modify - setBody - x
 
 captures :: AppMonadT [(ByteString, ByteString)]
-captures = namespace miku_captures <$> ask
+captures = namespace mikuCaptures <$> ask
