@@ -2,7 +2,6 @@
 
 module Network.Miku.Type where
 
--- import           Control.Lens
 import           Control.Monad.Identity
 import           Control.Monad.Reader
 import           Control.Monad.State
