@@ -22,12 +22,11 @@ data MikuState = MikuState
   {
     _middlewares :: [Middleware]
   , _router      :: [Middleware]
-  , _mimes       :: [H.Header]
   }
 
 instance Monoid MikuState where
-   mempty = MikuState [] [] []
-   mappend (MikuState x y z) (MikuState x' y' z') = MikuState (x <> x') (y <> y') (z <> z')
+   mempty = MikuState [] []
+   mappend (MikuState x y) (MikuState x' y') = MikuState (x <> x') (y <> y')
 
 makeLenses ''MikuState
 

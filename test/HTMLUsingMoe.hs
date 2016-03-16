@@ -10,8 +10,8 @@ import           Text.HTML.Moe2
 import           Control.Lens
 import qualified Data.ByteString.Lazy.Char8 as LB
 import           Data.ByteString.Lens
-import           Prelude                    hiding (div, head, (-), (/))
 import           Network.Wai.Handler.Warp   (run)
+import           Prelude                    hiding (div, head, (-), (/))
 
 hello_page :: LB.ByteString
 hello_page = render_bytestring -

@@ -7,8 +7,11 @@ module Network.Miku.Engine where
 import           Control.Lens          hiding (use)
 import           Control.Monad.Reader  hiding (join)
 import           Control.Monad.State   hiding (join)
+import           Data.Bifunctor        (first)
 import           Data.ByteString.Char8 (ByteString)
 import qualified Data.ByteString.Char8 as B
+import           Data.CaseInsensitive  (CI)
+import qualified Data.CaseInsensitive  as CI
 import qualified Data.Default          as Default
 import           Data.List
 import           Data.Maybe
@@ -19,9 +22,6 @@ import           Network.Miku.Utils
 import           Network.Wai
 import           Prelude               hiding ((-))
 import           System.FilePath       ((</>))
-import           Data.Bifunctor        (first)
-import           Data.CaseInsensitive  (CI)
-import qualified Data.CaseInsensitive  as CI
 
 notFoundResponse :: Response
 notFoundResponse = responseLBS H.status404

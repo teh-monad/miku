@@ -19,6 +19,7 @@ import           Network.Wai
 import           Network.Wai.Middleware.StripHeaders
 import           Prelude                             hiding ((-))
 
+-- import Network.Wai.Middleware.Static
 
 -- app :: Application -> AppMonad
 -- app f = ask >>= (liftIO . f) >>= State.put
@@ -43,11 +44,11 @@ add_route route_method route_string app_monad = do
 -- after :: (Response -> IO Response) -> MikuMonad
 -- after = middleware . censor
 
-mime :: ByteString -> ByteString -> MikuMonad
-mime k v = mimes %= insertLast (CI.mk k,v)
+-- mime :: ByteString -> ByteString -> MikuMonad
+-- mime k v = mimes %= insertLast (CI.mk k,v)
 
--- public :: Maybe ByteString -> [ByteString] -> MikuMonad
--- public r xs = middleware - static r xs
+-- public :: ByteString -> MikuMonad
+-- public = staticPolicy . addBase . review (utf8 . _Text)
 
 _ContentType :: ByteString
 _ContentType = "Content-Type"

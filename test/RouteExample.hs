@@ -62,7 +62,7 @@ appMain = do
     -- public (Just ".") ["/src"]
 
     -- treat .hs extension as text/plain
-    mime "hs" "text/plain"
+    -- mime "hs" "text/plain"
 -- default on port 3000
 
 main :: IO ()
