@@ -28,7 +28,6 @@ mkDerivation {
 
     happy
     stylish-haskell
-    happy
 
     nemesis
     pretty-show

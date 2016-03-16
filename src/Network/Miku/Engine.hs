@@ -23,16 +23,16 @@ import           Network.Wai
 import           Prelude               hiding ((-))
 import           System.FilePath       ((</>))
 
-notFoundResponse :: Response
-notFoundResponse = responseLBS H.status404
+emptyResponse :: Response
+emptyResponse = responseLBS H.status200
                    [("Content-Type", "text/plain")]
-                   "404 - Not Found"
+                   "empty app"
 
-notFound :: Application
-notFound env respond = respond - notFoundResponse
+emptyApp :: Application
+emptyApp _ respond = respond - emptyResponse
 
 miku :: MikuMonad -> Application
-miku = flip miku_middleware notFound
+miku = flip miku_middleware emptyApp
 
 use :: [Middleware] -> Middleware
 use = foldl (.) id
@@ -71,7 +71,7 @@ miku_router route_method route_string app_monad app = \env ->
 
     run_app_monad :: AppMonad -> Application
     run_app_monad app_monad env respond = do
-      r <- runReaderT app_monad env & flip execStateT notFoundResponse
+      r <- runReaderT app_monad env & flip execStateT emptyResponse
       respond r
 
 
