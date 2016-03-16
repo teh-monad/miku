@@ -12,7 +12,6 @@ import           Data.ByteString.Char8 (ByteString)
 import qualified Data.ByteString.Char8 as B
 import           Data.CaseInsensitive  (CI)
 import qualified Data.CaseInsensitive  as CI
-import qualified Data.Default          as Default
 import           Data.List
 import           Data.Maybe
 import qualified Network.HTTP.Types    as H

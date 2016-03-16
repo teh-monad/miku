@@ -1,5 +1,5 @@
 Name:                 miku
-Version:              2016.3.16
+Version:              2016.3.16.1
 Build-type:           Simple
 Synopsis:             A minimum web dev DSL in Haskell
 Description:
@@ -22,17 +22,16 @@ library
                       , bytestring
                       , case-insensitive >= 1.2.0.5
                       , containers
-                      , data-default >= 0.5.3
                       , filepath >= 1.4.0.0
                       , http-types >= 0.9
                       , lens
                       , mtl
                       , wai
                       , wai-extra
-                    -- for testing
-                    , foreign-store
-                    , moe
-                    , warp
+                      -- for testing
+                      -- , foreign-store
+                      -- , moe
+                      -- , warp
 
 
   hs-source-dirs: src/

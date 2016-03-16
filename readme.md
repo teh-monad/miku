@@ -6,17 +6,18 @@ A tiny web dev DSL
 
     {-# LANGUAGE OverloadedStrings #-}
 
-    import Network.Miku
-    import Hack2.Handler.SnapServer
+    import           Network.Miku
+    import           Network.Wai.Handler.Warp (run)
 
-    main = run . miku $ get "/" (text "miku power")
+    main :: IO ()
+    main = run 3000 . miku $ get "/" (text "miku power")
 
 
 ## Installation
 
     cabal update
     cabal install miku
-    cabal install hack2-handler-snap-server
+    cabal install warp 
 
     -- copy and paste the above example to myapp.hs
 
@@ -28,20 +29,18 @@ check: <http://localhost:3000>
 
 <https://github.com/nfjinjing/miku/blob/master/test/RouteExample.hs>
 
-
 ## Routes
 
 ### Verbs
 
     {-# LANGUAGE OverloadedStrings #-}
 
-    -- use - instead of $ for clarity
-    import Network.Miku.Utils ((-))
-    import Prelude hiding ((-))
     import Network.Miku
-    import Hack2.Handler.SnapServer
+    import Network.Miku.Utils ((-))
+    import Network.Wai.Handler.Warp (run)
+    import Prelude hiding ((-))
 
-    main = run . miku - do
+    main = run 3000 . miku - do
 
       get "/" - do
         -- something for a get request
@@ -64,35 +63,15 @@ check: <http://localhost:3000>
     -- [("user","miku"),("message","hello")]
 
 
-## Static
+## WAI integration
 
-    -- public serve, only allows `./src`
-    public (Just ".") ["/src"]
+### Use WAI middleware
 
-## Mime types
+    import Network.Wai.Middleware.RequestLogger
 
-    -- treat .hs extension as text/plain
-    mime "hs" "text/plain"
+    middleware logStdout
 
-## Filters
-
-    -- before takes a function of type (Env -> IO Env)
-    before - \e -> do
-      putStrLn "before called"
-      return e
-
-    -- after takes that of type (Response -> IO Response)
-    after return
-
-## Hack2 integration
-
-### Use hack2 middleware
-
-    import Hack2.Contrib.Middleware.SimpleAccessLogger
-
-    middleware - simple_access_logger Nothing
-
-### Convert miku into a hack2 application
+### Convert miku into a WAI application
 
     -- in Network.Miku.Engine
 
@@ -103,7 +82,7 @@ check: <http://localhost:3000>
 
 * It's recommended to use your own html combinator / template engine. Try DIY with, e.g. [moe](https://github.com/nfjinjing/moe).
 * [Example view using custom html combinator (moe in this case)](https://github.com/nfjinjing/miku/blob/master/test/HTMLUsingMoe.hs)
-* When inspecting the request, use `ask` defined in `ReaderT` monad to get the `Hack2.Environment`, then use helper method defined in `Hack2.Contrib.Request` to query it.
+* When inspecting the request, use `ask` defined in `ReaderT` monad to get the `Request`, then use helper methods for `wai` to query it.
 * `Response` is in `StateT`, `html` and `text` are simply helper methods that update the state, i.e. setting the response body, content-type, etc.
 * You do need to understand monad transformers to reach the full power of `miku`.
 
