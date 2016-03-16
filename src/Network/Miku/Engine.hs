@@ -5,12 +5,15 @@
 module Network.Miku.Engine where
 
 import           Air.Data.Record.SimpleLabel       hiding (get)
-import           Air.Env                           hiding (mod, (-))
+import           Air.Env                           hiding (length, mod, take,
+                                                    (-), (.))
+import           Control.Lens                      hiding (use)
 import           Control.Monad.Reader              hiding (join)
 import           Control.Monad.State               hiding (join)
 import           Data.ByteString.Char8             (ByteString)
 import qualified Data.ByteString.Char8             as B
 import qualified Data.Default                      as Default
+import           Data.List
 import           Data.Maybe
 import           Hack2
 import           Hack2.Contrib.Middleware.NotFound
@@ -19,9 +22,8 @@ import           Hack2.Contrib.Utils               hiding (get, put)
 import           Network.Miku.Config
 import           Network.Miku.Type
 import           Network.Miku.Utils
-import           Prelude                           ()
+import           Prelude                           ((.))
 import qualified Prelude                           as P
-import Control.Lens hiding (use)
 
 
 miku :: MikuMonad -> Application
@@ -42,9 +44,9 @@ miku_middleware miku_monad =
 
 miku_router :: RequestMethod -> ByteString -> AppMonad -> Middleware
 miku_router route_method route_string app_monad app = \env ->
-  if env.request_method == route_method
+  if request_method env == route_method
     then
-      case env.path_info.parse_params route_string of
+      case env & path_info & parse_params route_string of
         Nothing -> app env
         Just (_, params) ->
           let miku_app = run_app_monad - local (put_namespace miku_captures params) app_monad
@@ -58,7 +60,7 @@ miku_router route_method route_string app_monad app = \env ->
   where
 
     run_app_monad :: AppMonad -> Application
-    run_app_monad app_monad = \env -> runReaderT app_monad env .flip execStateT Default.def
+    run_app_monad app_monad = \env -> runReaderT app_monad env & flip execStateT Default.def
 
 
 parse_params :: ByteString -> ByteString -> Maybe (ByteString, [(ByteString, ByteString)])
@@ -70,11 +72,11 @@ parse_params "/" "/"  = Just ("/", [])
 
 parse_params t s =
 
-  let template_tokens = t.B.split '/'
-      url_tokens      = s.B.split '/'
+  let template_tokens = B.split '/' t
+      url_tokens      = B.split '/' s
 
-      _template_last_token_matches_everything         = template_tokens.length P.> 0 && template_tokens.last.is "*"
-      _template_tokens_length_equals_url_token_length = template_tokens.length == url_tokens.length
+      _template_last_token_matches_everything         = (template_tokens & length) P.> 0 && (["*"] `isSuffixOf` template_tokens)
+      _template_tokens_length_equals_url_token_length = (template_tokens & length) == (url_tokens & length)
   in
 
   if not - _template_last_token_matches_everything || _template_tokens_length_equals_url_token_length
@@ -82,17 +84,17 @@ parse_params t s =
     else
       let rs = zipWith capture template_tokens url_tokens
       in
-      if rs.all isJust
+      if all isJust rs
         then
-          let token_length = template_tokens.length
-              location     = B.pack - "/" / (B.unpack - url_tokens.take token_length .B.intercalate "/")
+          let token_length = length template_tokens
+              location     = B.pack - "/" / (B.unpack - B.intercalate "/" - take token_length url_tokens)
           in
-          Just - (location, rs.catMaybes.catMaybes)
+          Just - (location, rs & catMaybes & catMaybes)
         else Nothing
 
   where
     capture x y
-      | x.B.unpack.starts_with ":" = Just - Just (x.B.tail, y)
-      | x.is "*" = Just Nothing
+      | ":" `isPrefixOf` B.unpack x = Just - Just (B.tail x, y)
+      | x == "*" = Just Nothing
       | x == y = Just Nothing
       | otherwise = Nothing
