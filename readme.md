@@ -101,8 +101,8 @@ check: <http://localhost:3000>
 
 ## Hints
 
-* It's recommended to use your own html combinator / template engine. Try DIY with, e.g. [moe](http://github.com/nfjinjing/moe).
-* [Example view using custom html combinator (moe in this case)](http://github.com/nfjinjing/miku/blob/master/src/test/HTMLUsingMoe.hs)
+* It's recommended to use your own html combinator / template engine. Try DIY with, e.g. [moe](https://github.com/nfjinjing/moe).
+* [Example view using custom html combinator (moe in this case)](https://github.com/nfjinjing/miku/blob/master/test/HTMLUsingMoe.hs)
 * When inspecting the request, use `ask` defined in `ReaderT` monad to get the `Hack2.Environment`, then use helper method defined in `Hack2.Contrib.Request` to query it.
 * `Response` is in `StateT`, `html` and `text` are simply helper methods that update the state, i.e. setting the response body, content-type, etc.
 * You do need to understand monad transformers to reach the full power of `miku`.
