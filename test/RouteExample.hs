@@ -9,17 +9,13 @@ import qualified Data.ByteString.Char8                       as B
 import qualified Data.ByteString.Lazy.Char8                  as Lazy
 import           Data.Maybe
 import           Data.Monoid
-import           Foreign.Store
 import           Hack2.Contrib.Middleware.SimpleAccessLogger
 import           Hack2.Contrib.Request
 import           Hack2.Contrib.Response
 import           Hack2.Contrib.Utils                         (show_bytestring)
 import           Hack2.Handler.SnapServer
 import           Network.Miku
-import           Network.Miku
-import           Network.Miku.Engine
-import           Network.Miku.Utils
-import           Network.Miku.Utils
+import           Network.Miku.Utils                          ((-))
 import           Prelude                                     hiding ((-))
 
 appMain :: IO ()
