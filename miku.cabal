@@ -27,9 +27,9 @@ library
                     , mtl
                     , lens
                     -- for testing
-                    , hack2-handler-snap-server
-                    , foreign-store
-                    , moe
+                    -- , hack2-handler-snap-server
+                    -- , foreign-store
+                    -- , moe
 
 
   hs-source-dirs: src/
