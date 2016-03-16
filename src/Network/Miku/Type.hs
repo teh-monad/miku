@@ -3,14 +3,11 @@
 module Network.Miku.Type where
 
 import           Control.Lens
-import           Control.Lens.TH
-import           Control.Monad.Identity
 import           Control.Monad.Reader
 import           Control.Monad.State
-import           Data.ByteString.Char8       (ByteString)
 import           Data.Monoid
 import           Network.Wai
-import qualified Network.HTTP.Types           as H
+
 
 type AppReader    = Request
 type AppState     = Response

@@ -1,5 +1,5 @@
 Name:                 miku
-Version:              2016.3.16.1
+Version:              2016.3.16.2
 Build-type:           Simple
 Synopsis:             A minimum web dev DSL in Haskell
 Description:
@@ -34,6 +34,7 @@ library
                       -- , warp
 
 
+  ghc-options:       -Wall -fno-warn-unused-do-bind
   hs-source-dirs: src/
   exposed-modules:
                       Network.Miku

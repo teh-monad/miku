@@ -5,12 +5,11 @@
 module Network.Miku.Engine where
 
 import           Control.Lens          hiding (use)
-import           Control.Monad.Reader  hiding (join)
-import           Control.Monad.State   hiding (join)
+import           Control.Monad.Reader
+import           Control.Monad.State
 import           Data.Bifunctor        (first)
 import           Data.ByteString.Char8 (ByteString)
 import qualified Data.ByteString.Char8 as B
-import           Data.CaseInsensitive  (CI)
 import qualified Data.CaseInsensitive  as CI
 import           Data.List
 import           Data.Maybe
@@ -40,13 +39,11 @@ miku_middleware :: MikuMonad -> Middleware
 miku_middleware miku_monad =
 
   let miku_state                      = execState miku_monad mempty
-      mime_filter                     = id -- user_mime - miku_state ^. mimes
       miku_middleware_stack           = use - miku_state ^. middlewares
       miku_router_middleware          = use - miku_state ^. router
-      pre_installed_middleware_stack  = use - pre_installed_middlewares
   in
 
-  use [pre_installed_middleware_stack, mime_filter, miku_middleware_stack, miku_router_middleware]
+  use [miku_middleware_stack, miku_router_middleware]
 
 
 miku_router :: H.Method -> ByteString -> AppMonad -> Middleware
@@ -57,7 +54,7 @@ miku_router route_method route_string app_monad app = \env ->
         Nothing -> app env
         Just (_, params) ->
           let mikuHeaders = params & map (first CI.mk)
-              miku_app = run_app_monad - local (putNamespace miku_captures mikuHeaders) app_monad
+              miku_app = _run_app_monad - local (putNamespace miku_captures mikuHeaders) app_monad
           in
           miku_app env
 
@@ -68,10 +65,10 @@ miku_router route_method route_string app_monad app = \env ->
   where
 
 
-    run_app_monad :: AppMonad -> Application
-    run_app_monad app_monad env respond = do
-      r <- runReaderT app_monad env & flip execStateT emptyResponse
-      respond r
+    _run_app_monad :: AppMonad -> Application
+    _run_app_monad _app_monad _env _respond = do
+      r <- runReaderT _app_monad _env & flip execStateT emptyResponse
+      _respond r
 
 
 parse_params :: ByteString -> ByteString -> Maybe (ByteString, [(ByteString, ByteString)])

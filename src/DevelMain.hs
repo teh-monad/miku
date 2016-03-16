@@ -4,9 +4,6 @@ module DevelMain where
 
 import           Control.Concurrent       (forkIO)
 import           Foreign.Store
-import qualified HelloWorld               as HelloWorld
-import qualified HTMLUsingMoe             as HTMLUsingMoe
-import           Network.Miku.Utils
 import           Prelude                  hiding ((-))
 import qualified RouteExample             as RouteExample
 

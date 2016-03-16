@@ -5,5 +5,5 @@ module Network.Miku
 )
 where
 
-import Network.Miku.Engine (miku)
-import Network.Miku.DSL
+import           Network.Miku.DSL
+import           Network.Miku.Engine (miku)
