@@ -26,7 +26,7 @@ check: <http://localhost:3000>
 
 ## Quick reference
 
-<https://github.com/nfjinjing/miku/blob/master/test/route_example.hs>
+<https://github.com/nfjinjing/miku/blob/master/test/RouteExample.hs>
 
 
 ## Routes
@@ -36,7 +36,9 @@ check: <http://localhost:3000>
     {-# LANGUAGE OverloadedStrings #-}
 
     -- use - instead of $ for clarity
-    import Air.Light ((-))
+
+    import Network.Miku.Utils ((-))
+
     import Prelude hiding ((-))
 
     import Network.Miku
