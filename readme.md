@@ -36,11 +36,8 @@ check: <http://localhost:3000>
     {-# LANGUAGE OverloadedStrings #-}
 
     -- use - instead of $ for clarity
-
     import Network.Miku.Utils ((-))
-
     import Prelude hiding ((-))
-
     import Network.Miku
     import Hack2.Handler.SnapServer
 
