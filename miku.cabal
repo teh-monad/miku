@@ -24,11 +24,11 @@ library
                       , containers
                       , filepath >= 1.4.0.0
                       , http-types >= 0.9
-                      , lens
                       , mtl
                       , wai
                       , wai-extra
                       -- for testing
+                      -- , lens
                       -- , foreign-store
                       -- , moe
                       -- , warp

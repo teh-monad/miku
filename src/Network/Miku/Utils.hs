@@ -2,7 +2,6 @@
 
 module Network.Miku.Utils where
 
-import           Control.Lens          ((&))
 import           Data.Bifunctor        (first)
 import           Data.ByteString.Char8 (ByteString)
 import qualified Data.ByteString.Char8 as B
@@ -16,6 +15,11 @@ infixr 0 -
 {-# INLINE (-) #-}
 (-) :: (a -> b) -> a -> b
 f - x = f x
+
+infixl 1 &
+{-# INLINE (&) #-}
+(&) :: a -> (a -> b) -> b
+x & f = f x
 
 namespace :: ByteString -> Request -> [(ByteString, ByteString)]
 namespace x =

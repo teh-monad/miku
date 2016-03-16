@@ -2,12 +2,12 @@
 
 module Network.Miku.Type where
 
-import           Control.Lens
+-- import           Control.Lens
+import           Control.Monad.Identity
 import           Control.Monad.Reader
 import           Control.Monad.State
 import           Data.Monoid
 import           Network.Wai
-
 
 type AppReader    = Request
 type AppState     = Response
@@ -17,15 +17,12 @@ type AppMonad     = AppMonadT ()
 
 data MikuState = MikuState
   {
-    _middlewares :: [Middleware]
-  , _router      :: [Middleware]
+    middlewares :: [Middleware]
+  , router      :: [Middleware]
   }
 
 instance Monoid MikuState where
    mempty = MikuState [] []
    mappend (MikuState x y) (MikuState x' y') = MikuState (x <> x') (y <> y')
 
-makeLenses ''MikuState
-
-type MikuMonadT a = State MikuState a
-type MikuMonad    = MikuMonadT () -- (Identity ())
+type MikuMonad = StateT MikuState Identity ()

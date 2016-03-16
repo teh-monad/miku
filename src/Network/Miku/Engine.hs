@@ -4,7 +4,6 @@
 
 module Network.Miku.Engine where
 
-import           Control.Lens          hiding (use)
 import           Control.Monad.Reader
 import           Control.Monad.State
 import           Data.Bifunctor        (first)
@@ -39,15 +38,15 @@ miku_middleware :: MikuMonad -> Middleware
 miku_middleware miku_monad =
 
   let miku_state                      = execState miku_monad mempty
-      miku_middleware_stack           = use - miku_state ^. middlewares
-      miku_router_middleware          = use - miku_state ^. router
+      miku_middleware_stack           = use - middlewares miku_state
+      miku_router_middleware          = use - router miku_state
   in
 
   use [miku_middleware_stack, miku_router_middleware]
 
 
-miku_router :: H.Method -> ByteString -> AppMonad -> Middleware
-miku_router route_method route_string app_monad app = \env ->
+mikuRouter :: H.Method -> ByteString -> AppMonad -> Middleware
+mikuRouter route_method route_string app_monad app = \env ->
   if requestMethod env == route_method
     then
       case env & rawPathInfo & parse_params route_string of

@@ -3,7 +3,6 @@
 module Network.Miku.DSL where
 
 import           Blaze.ByteString.Builder            (fromByteString)
-import           Control.Lens
 import           Control.Monad.Reader
 import           Control.Monad.State
 import           Data.ByteString.Char8               (ByteString)
@@ -18,7 +17,8 @@ import           Network.Wai.Middleware.StripHeaders
 import           Prelude                             hiding ((-))
 
 middleware :: Middleware -> MikuMonad
-middleware x = middlewares %= insertLast x
+middleware x = do
+  modify - \_state -> _state { middlewares = insertLast x - middlewares _state }
 
 get, put, post, delete :: ByteString -> AppMonad -> MikuMonad
 get    = addRoute H.methodGet
@@ -28,8 +28,10 @@ delete = addRoute H.methodDelete
 
 
 addRoute :: H.Method -> ByteString -> AppMonad -> MikuMonad
-addRoute route_method route_string app_monad = do
-  modifying router - insertLast - miku_router route_method route_string app_monad
+addRoute routeMethod routeString appMonad = do
+  let newRoute = mikuRouter routeMethod routeString appMonad
+
+  modify - \_state -> _state { router = insertLast newRoute - router _state }
 
 
 _ContentType :: ByteString
@@ -58,4 +60,4 @@ json x = do
   modify - setBody - x
 
 captures :: AppMonadT [(ByteString, ByteString)]
-captures = ask <&> namespace miku_captures
+captures = namespace miku_captures <$> ask
