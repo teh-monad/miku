@@ -1,6 +1,4 @@
-{-# LANGUAGE NamedFieldPuns    #-}
 {-# LANGUAGE OverloadedStrings #-}
-
 
 module Network.Miku.Engine where
 
@@ -45,7 +43,7 @@ mikuMiddleware mikuMonad =
   use [mikuMiddlewareStack, mikuRouterMiddleware]
 
 
-mikuRouter :: H.Method -> ByteString -> AppMonad -> Middleware
+mikuRouter :: H.Method -> ByteString -> AppMonad a -> Middleware
 mikuRouter routeMethod routeString appMonad app = \env ->
   if requestMethod env == routeMethod
     then
@@ -64,7 +62,7 @@ mikuRouter routeMethod routeString appMonad app = \env ->
   where
 
 
-    _runAppMonad :: AppMonad -> Application
+    _runAppMonad :: AppMonad a -> Application
     _runAppMonad _appMonad _env _respond = do
       r <- runReaderT _appMonad _env & flip execStateT emptyResponse
       _respond r

@@ -1,5 +1,5 @@
 Name:                 miku
-Version:              2016.3.16.2
+Version:              2016.3.17
 Build-type:           Simple
 Synopsis:             A minimum web dev DSL in Haskell
 Description:
@@ -28,10 +28,10 @@ library
                       , wai
                       , wai-extra
                       -- for testing
-                      -- , lens
-                      -- , foreign-store
-                      -- , moe
-                      -- , warp
+                      , lens
+                      , foreign-store
+                      , moe
+                      , warp
 
 
   ghc-options:       -Wall -fno-warn-unused-do-bind

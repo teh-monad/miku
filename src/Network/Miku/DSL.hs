@@ -20,14 +20,14 @@ middleware :: Middleware -> MikuMonad
 middleware x = do
   modify - \_state -> _state { middlewares = insertLast x - middlewares _state }
 
-get, put, post, delete :: ByteString -> AppMonad -> MikuMonad
+get, put, post, delete :: ByteString -> AppMonad' -> MikuMonad
 get    = addRoute H.methodGet
 put    = addRoute H.methodPut
 post   = addRoute H.methodPost
 delete = addRoute H.methodDelete
 
 
-addRoute :: H.Method -> ByteString -> AppMonad -> MikuMonad
+addRoute :: H.Method -> ByteString -> AppMonad' -> MikuMonad
 addRoute routeMethod routeString appMonad = do
   let newRoute = mikuRouter routeMethod routeString appMonad
 
@@ -43,21 +43,21 @@ setContentType x = mapResponseHeaders ((CI.mk _ContentType, x):) . stripHeader _
 setBody :: ByteString -> Response -> Response
 setBody x r = responseBuilder (responseStatus r) (responseHeaders r) - fromByteString x
 
-text :: ByteString -> AppMonad
+text :: ByteString -> AppMonad'
 text x = do
   modify - setContentType "text/plain; charset=UTF-8"
   modify - setBody - x
 
-html :: ByteString -> AppMonad
+html :: ByteString -> AppMonad'
 html x = do
   modify - setContentType "text/html; charset=UTF-8"
   modify - setBody - x
 
 
-json :: ByteString -> AppMonad
+json :: ByteString -> AppMonad'
 json x = do
   modify - setContentType "text/json"
   modify - setBody - x
 
-captures :: AppMonadT [(ByteString, ByteString)]
+captures :: AppMonad [(ByteString, ByteString)]
 captures = namespace mikuCaptures <$> ask

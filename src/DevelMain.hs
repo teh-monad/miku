@@ -2,10 +2,10 @@
 
 module DevelMain where
 
-import           Control.Concurrent       (forkIO)
+import           Control.Concurrent (forkIO)
 import           Foreign.Store
-import           Prelude                  hiding ((-))
-import qualified RouteExample             as RouteExample
+import           Prelude            hiding ((-))
+import qualified RouteExample       as RouteExample
 
 main :: IO ()
 main = do

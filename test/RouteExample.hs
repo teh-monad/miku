@@ -2,13 +2,8 @@
 
 module RouteExample where
 
-
-
 import           Control.Monad.Reader
 import qualified Data.ByteString.Char8                as B
-
-
-
 import           Network.Miku
 import           Network.Miku.Utils                   ((-))
 import           Network.Wai.Handler.Warp             (run)
