@@ -4,9 +4,6 @@
 
 module Network.Miku.Engine where
 
-import           Air.Data.Record.SimpleLabel       hiding (get)
-import           Air.Env                           hiding (length, mod, take,
-                                                    (-), (.))
 import           Control.Lens                      hiding (use)
 import           Control.Monad.Reader              hiding (join)
 import           Control.Monad.State               hiding (join)
@@ -22,8 +19,8 @@ import           Hack2.Contrib.Utils               hiding (get, put)
 import           Network.Miku.Config
 import           Network.Miku.Type
 import           Network.Miku.Utils
-import           Prelude                           ((.))
-import qualified Prelude                           as P
+import           Prelude                           hiding ((-))
+import           System.FilePath                   ((</>))
 
 
 miku :: MikuMonad -> Application
@@ -75,7 +72,7 @@ parse_params t s =
   let template_tokens = B.split '/' t
       url_tokens      = B.split '/' s
 
-      _template_last_token_matches_everything         = (template_tokens & length) P.> 0 && (["*"] `isSuffixOf` template_tokens)
+      _template_last_token_matches_everything         = (template_tokens & length) > 0 && (["*"] `isSuffixOf` template_tokens)
       _template_tokens_length_equals_url_token_length = (template_tokens & length) == (url_tokens & length)
   in
 
@@ -87,7 +84,7 @@ parse_params t s =
       if all isJust rs
         then
           let token_length = length template_tokens
-              location     = B.pack - "/" / (B.unpack - B.intercalate "/" - take token_length url_tokens)
+              location     = B.pack - "/" </> (B.unpack - B.intercalate "/" - take token_length url_tokens)
           in
           Just - (location, rs & catMaybes & catMaybes)
         else Nothing

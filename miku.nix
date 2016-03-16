@@ -11,6 +11,7 @@
 
 , hack2-handler-snap-server
 , snap-server
+, moe
 
 , pkgs
 
@@ -34,6 +35,7 @@ mkDerivation {
 
     hack2-handler-snap-server
     snap-server
+    moe
   ] ++
   (with pkgs;
     [

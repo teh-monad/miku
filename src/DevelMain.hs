@@ -2,17 +2,20 @@
 
 module DevelMain where
 
-import Network.Miku
-import Hack2.Handler.SnapServer
-import Air.Env (fork)
-import Foreign.Store
-
-appMain :: IO ()
-appMain = run . miku $ get "/" (text "miku power")
+import           Control.Concurrent       (forkIO)
+import           Foreign.Store
+import           Hack2.Handler.SnapServer
+import qualified HelloWorld               as HelloWorld
+import qualified HTMLUsingMoe             as HTMLUsingMoe
+import           Network.Miku.Utils
+import           Prelude                  hiding ((-))
+import qualified RouteExample             as RouteExample
 
 main :: IO ()
 main = do
-  fork appMain
+  -- forkIO RouteExample.main
+  -- forkIO HelloWorld.main
+  forkIO HTMLUsingMoe.main
   _ <- newStore ()
   return ()
 

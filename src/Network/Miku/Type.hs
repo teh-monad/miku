@@ -2,18 +2,15 @@
 
 module Network.Miku.Type where
 
-import           Air.Data.Default
-import           Air.Data.Record.SimpleLabel
-import           Air.TH
 import           Control.Lens
 import           Control.Lens.TH
+import           Control.Monad.Identity
 import           Control.Monad.Reader
 import           Control.Monad.State
 import           Data.ByteString.Char8       (ByteString)
 import           Data.Monoid
 import           Hack2
 import           Hack2.Contrib.Utils
-import Control.Monad.Identity
 
 type AppReader    = Env
 type AppState     = Response

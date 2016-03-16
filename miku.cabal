@@ -1,5 +1,5 @@
 Name:                 miku
-Version:              2014.11.17
+Version:              2016.3.16
 Build-type:           Simple
 Synopsis:             A minimum web dev DSL in Haskell
 Description:
@@ -16,19 +16,20 @@ homepage:             https://github.com/nfjinjing/miku
 extra-doc-files:      readme.md, changelog.md, Nemesis, known-issues.md
 
 library
-  build-depends:      base > 4 && <= 6
+  build-depends:      
+                      base > 4 && <= 6
+                    , bytestring
+                    , containers
                     , data-default
+                    , filepath >= 1.4.0.0
                     , hack2 >= 2012.1.19
                     , hack2-contrib >= 2012.1.19
-                    , air >= 2014.5.19
-                    , air-th
                     , mtl
-                    , containers
-                    , bytestring
+                    , lens
                     -- for testing
                     , hack2-handler-snap-server
                     , foreign-store
-                    , lens
+                    , moe
 
 
   hs-source-dirs: src/

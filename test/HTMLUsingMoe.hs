@@ -1,18 +1,20 @@
 {-# LANGUAGE OverloadedStrings #-}
 
+module HTMLUsingMoe where
 
 import qualified Network.Miku as Miku
 import Network.Miku (get, miku)
+import Network.Miku.Utils ((-))
 import Hack2.Handler.SnapServer
 import Text.HTML.Moe2
 
-import Prelude hiding ((/), (-), head, (>), div)
-import Air.Env ((-), l2s)
+import Prelude hiding ((-), head, div, (/))
+import qualified Data.ByteString.Lazy.Char8 as LB
+import Control.Lens
+import Data.ByteString.Lens
 
-import qualified Data.ByteString.Lazy.Char8 as LazyByteString
-import qualified Data.ByteString.Char8 as StrictByteString
 
-hello_page :: LazyByteString.ByteString
+hello_page :: LB.ByteString
 hello_page = render_bytestring -
   html - do
     head - do
@@ -23,9 +25,10 @@ hello_page = render_bytestring -
       div ! [_class "container"] - do
         str "hello world"
 
+main :: IO ()
 main = do
   putStrLn - "server started..."
-  
+
   run - miku - do
     get "/" - do
-      Miku.html - l2s -  hello_page
+      Miku.html - view packedChars - review packedChars hello_page

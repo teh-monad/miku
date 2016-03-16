@@ -2,14 +2,14 @@
 
 module Network.Miku.Utils where
 
+import Control.Lens ((#), (&))
 import Control.Monad.State
+import Data.Bifunctor (first)
+import Data.ByteString.Char8 (ByteString)
+import Data.Monoid ((<>))
 import Hack2
 import Prelude hiding ((-))
 import qualified Data.ByteString.Char8 as B
-import Data.ByteString.Char8 (ByteString)
-import Control.Lens ((#), (&))
-import Data.Bifunctor (first)
-import Data.Monoid ((<>))
 
 infixr 0 -
 {-# INLINE (-) #-}
