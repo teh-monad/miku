@@ -1,4 +1,4 @@
-2016.3.16.2
+2016.3.17
 
 * Fix `captures` API to remain compatible with older versions
 * Remove `lens` dependenty to stay lean

@@ -20,7 +20,7 @@
 }:
 mkDerivation {
   pname = "miku";
-  version = "2016.3.16";
+  version = "2016.3.17";
   src = ./.;
   libraryHaskellDepends = [
     base bytestring containers
