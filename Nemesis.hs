@@ -13,6 +13,12 @@ nemesis = do
     , "test/hello_world"
     ]
 
+  desc "dist"
+  task "dist" - do
+    sh "cabal clean"
+    sh "cabal configure"
+    sh "cabal sdist"
+
   desc "watch hs"
   task "watch-hs" - do
     sh "find . -name '*.hs' | entr runghc Nemesis.hs emacs-save-and-restart"
