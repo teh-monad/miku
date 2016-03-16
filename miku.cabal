@@ -1,21 +1,33 @@
-Name:                 miku
-Version:              2016.3.17
-Build-type:           Simple
-Synopsis:             A minimum web dev DSL in Haskell
-Description:
+name:                 miku
+category:             Web
+version:              2016.3.17
+cabal-version:        >= 1.6
+
+license:              BSD3
+license-file:         LICENSE
+
+author:               Jinjing Wang
+maintainer:           Jinjing Wang <nfjinjing@gmail.com>
+
+build-type:           Simple
+tested-with:          GHC == 7.10.3
+
+synopsis:             A minimum web dev DSL
+description:
 
     A simple library for fast web prototyping in Haskell.
 
-License:              BSD3
-License-file:         LICENSE
-Author:               Jinjing Wang
-Maintainer:           Jinjing Wang <nfjinjing@gmail.com>
-Cabal-version:        >= 1.2
-category:             Web
 homepage:             https://github.com/nfjinjing/miku
 extra-doc-files:      readme.md, changelog.md, known-issues.md
 
+source-repository head
+  type: git
+  location: git://github.com/nfjinjing/miku.git
+
 library
+  ghc-options:       -Wall -fno-warn-unused-do-bind
+  hs-source-dirs: src/
+
   build-depends:      
                         base > 4 && <= 6
                       , blaze-builder >= 0.4.0.1
@@ -33,9 +45,6 @@ library
                       -- , moe
                       -- , warp
 
-
-  ghc-options:       -Wall -fno-warn-unused-do-bind
-  hs-source-dirs: src/
   exposed-modules:
                       Network.Miku
                       Network.Miku.Config
