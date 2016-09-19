@@ -1,50 +1,63 @@
 { mkDerivation, base, bytestring, containers
 , mtl, stdenv
 
+, moe
+, wai
+, wai-extra
+, http-types
+, lens
+
 , nemesis
 , pretty-show
 , stylish-haskell
 , happy
 , hasktags
 , foreign-store
-, lens
-
-, moe
-, wai
-, wai-extra
-, warp
-, http-types
+, cabal-install
 
 , pkgs
 
 }:
+
+let
+
+  http-pony = import ../http-pony/default.nix {};
+  http-pony-serve-wai = import ../http-pony-serve-wai/default.nix {};
+
+in
+
 mkDerivation {
   pname = "miku";
   version = "2016.3.17";
   src = ./.;
   libraryHaskellDepends = [
+
     base bytestring containers
     mtl
-
-    happy
-    stylish-haskell
-
-    nemesis
-    pretty-show
-    foreign-store
-    lens
 
     moe
     wai
     wai-extra
-    warp
     http-types
-  ] ++
-  (with pkgs;
-    [
-      entr
-    ]
-  );
+
+    lens
+
+    pretty-show
+
+  ];
+
+  executableHaskellDepends = [
+    http-pony
+    http-pony-serve-wai
+
+    cabal-install
+    nemesis
+    foreign-store
+
+    stylish-haskell
+    happy
+    hasktags
+  ];
 
   homepage = "https://github.com/nfjinjing/miku";
   description = "A minimum web dev DSL in Haskell";

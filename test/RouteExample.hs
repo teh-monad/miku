@@ -6,17 +6,20 @@ import           Control.Monad.Reader
 import qualified Data.ByteString.Char8                as B
 import           Network.Miku
 import           Network.Miku.Utils                   ((-))
-import           Network.Wai.Handler.Warp             (run)
 import           Network.Wai.Middleware.RequestLogger
 import           Prelude                              hiding ((-))
+
+import Network.HTTP.Pony.Serve.Wai (fromWAI)
+import Network.HTTP.Pony.Serve (run)
+import Pipes.Safe (runSafeT)
 
 appMain :: IO ()
 appMain = do
   let io = liftIO
 
-  putStrLn "server started on port 3000..."
+  putStrLn "server started on port 8080..."
 
-  run 3000 . miku - do
+  runSafeT . run "localhost" "8080" . fromWAI . miku - do
 
     -- before return
     -- after return

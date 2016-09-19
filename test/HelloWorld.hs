@@ -3,7 +3,12 @@
 module HelloWorld where
 
 import           Network.Miku
-import           Network.Wai.Handler.Warp (run)
+
+import Network.HTTP.Pony.Serve (run)
+import Network.HTTP.Pony.Serve.Wai (fromWAI)
+import Pipes.Safe (runSafeT)
 
 main :: IO ()
-main = run 3000 . miku $ get "/" (text "miku power")
+main =
+  runSafeT . (run "localhost" "8080") . fromWAI . miku $
+    get "/" (text "miku power")

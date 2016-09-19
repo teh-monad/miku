@@ -1,2 +1,3 @@
 { nixpkgs ? import <nixpkgs> {} }:
+
 nixpkgs.pkgs.haskellPackages.callPackage ./miku.nix { }

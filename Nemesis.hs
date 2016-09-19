@@ -21,13 +21,9 @@ nemesis = do
 
   desc "watch hs"
   task "watch-hs" - do
-    sh "find . -name '*.hs' | entr runghc Nemesis.hs emacs-save-and-restart"
+    sh "find . -name '*.hs' | entr runghc Nemesis.hs emacs-restart"
 
-  desc "emacs-save-and-restart"
-  task "emacs-save-and-restart" - do
-    sh "emacsclient -e '(haskell-save-and-restart)'"
+  desc "emacs-restart"
+  task "emacs-restart" - do
+    sh "emacsclient -e '(haskell-restart)'"
 
-
-  desc "emacs-save-and-reload"
-  task "emacs-save-and-reload" - do
-    sh "emacsclient -e '(haskell-save-and-reload)'"
