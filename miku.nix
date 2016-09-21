@@ -24,6 +24,10 @@ let
   http-pony = import ../http-pony/default.nix {};
   http-pony-serve-wai = import ../http-pony-serve-wai/default.nix {};
 
+  http-pony-transformer-case-insensitive =
+    import ../http-pony-transformer-case-insensitive/default.nix {};
+  http-pony-transformer-http =
+    import ../http-pony-transformer-http/default.nix {};
 in
 
 mkDerivation {
@@ -49,6 +53,8 @@ mkDerivation {
   executableHaskellDepends = [
     http-pony
     http-pony-serve-wai
+    http-pony-transformer-case-insensitive
+    http-pony-transformer-http
 
     cabal-install
     nemesis

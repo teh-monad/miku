@@ -11,6 +11,8 @@ import           Prelude                              hiding ((-))
 
 import Network.HTTP.Pony.Serve.Wai (fromWAI)
 import Network.HTTP.Pony.Serve (run)
+import Network.HTTP.Pony.Transformer.HTTP (http)
+import Network.HTTP.Pony.Transformer.CaseInsensitive (caseInsensitive)
 import Pipes.Safe (runSafeT)
 
 appMain :: IO ()
@@ -19,7 +21,11 @@ appMain = do
 
   putStrLn "server started on port 8080..."
 
-  runSafeT . run "localhost" "8080" . fromWAI . miku - do
+  runSafeT . run "localhost" "8080"
+           . http
+           . caseInsensitive
+           . fromWAI
+           . miku - do
 
     -- before return
     -- after return
