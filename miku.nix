@@ -28,6 +28,8 @@ let
     import ../http-pony-transformer-case-insensitive/default.nix {};
   http-pony-transformer-http =
     import ../http-pony-transformer-http/default.nix {};
+  http-pony-transformer-startline =
+    import ../http-pony-transformer-startline/default.nix {};
 in
 
 mkDerivation {
@@ -55,6 +57,7 @@ mkDerivation {
     http-pony-serve-wai
     http-pony-transformer-case-insensitive
     http-pony-transformer-http
+    http-pony-transformer-startline
 
     cabal-install
     nemesis

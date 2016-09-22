@@ -13,6 +13,7 @@ import Network.HTTP.Pony.Serve.Wai (fromWAI)
 import Network.HTTP.Pony.Serve (run)
 import Network.HTTP.Pony.Transformer.HTTP (http)
 import Network.HTTP.Pony.Transformer.CaseInsensitive (caseInsensitive)
+import Network.HTTP.Pony.Transformer.StartLine (startLine)
 import Pipes.Safe (runSafeT)
 
 appMain :: IO ()
@@ -23,6 +24,7 @@ appMain = do
 
   runSafeT . run "localhost" "8080"
            . http
+           . startLine
            . caseInsensitive
            . fromWAI
            . miku - do
