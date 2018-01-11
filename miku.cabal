@@ -39,7 +39,7 @@ library
                       , mtl
                       , wai
                       , wai-extra
-
+                      , regex-pcre
                       -- for testing
                       -- , lens
                       -- , foreign-store
