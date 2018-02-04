@@ -14,7 +14,7 @@ A tiny web dev DSL
 
 
 ## Installation
-
+### cabal
     cabal update
     cabal install miku
     cabal install warp 
@@ -22,7 +22,14 @@ A tiny web dev DSL
     -- copy and paste the above example to myapp.hs
 
     runghc myapp.hs
-
+### stack
+    stack new miku-project && cd miku-project
+    stack install miku
+    stack install warp
+    stack build
+    stack exec miku-project-exe
+    
+    
 check: <http://localhost:3000>
 
 ## Quick reference
