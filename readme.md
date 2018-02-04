@@ -12,26 +12,6 @@ A tiny web dev DSL
     main :: IO ()
     main = run 3000 . miku $ get "/" (text "miku power")
 
-
-## Installation
-### cabal
-    cabal update
-    cabal install miku
-    cabal install warp 
-
-    -- copy and paste the above example to myapp.hs
-
-    runghc myapp.hs
-### stack
-    stack new miku-project && cd miku-project
-    stack install miku
-    stack install warp
-    stack build
-    stack exec miku-project-exe
-    
-    
-check: <http://localhost:3000>
-
 ## Quick reference
 
 <https://github.com/nfjinjing/miku/blob/master/test/RouteExample.hs>
